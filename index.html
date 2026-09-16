@@ -3,63 +3,349 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Робота поруч</title>
+    <title>Робота поруч — Знайди роботу або замов послугу у своєму районі</title>
+    <link href="https://cloudflare.com" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f7f6;
+        :root {
+            --primary-color: #1b4d3e;
+            --primary-light: #2c6b56;
+            --accent-color: #e67e22;
+            --bg-light: #f8f9fa;
+            --text-dark: #2d3748;
+            --text-muted: #718096;
+            --white: #ffffff;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            color: #2c3e50;
-            text-align: center;
+            font-family: Arial, sans-serif;
         }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.5;
+            padding-bottom: 80px;
+        }
+
         header {
-            background-color: #1b4d3e;
-            color: white;
-            padding: 20px;
-            font-size: 24px;
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 65px;
+        }
+
+        .logo {
+            font-size: 20px;
             font-weight: bold;
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
+
+        .desktop-nav {
+            display: flex;
+            gap: 15px;
+            list-style: none;
+        }
+
+        .desktop-nav a {
+            font-weight: 500;
+            color: var(--text-dark);
+            text-decoration: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .desktop-nav a.active {
+            color: var(--primary-color);
+            background-color: #edf2f7;
+        }
+
+        /* Мобільне меню */
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--white);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            display: none;
+            justify-content: space-around;
+            align-items: center;
+            height: 65px;
+            z-index: 1000;
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .mobile-nav-item i {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .mobile-nav-item.active {
+            color: var(--primary-color);
+        }
+
+        .mobile-nav-item.center-btn {
+            background-color: var(--accent-color);
+            color: var(--white);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            justify-content: center;
+            position: relative;
+            top: -10px;
+            box-shadow: 0 4px 10px rgba(230, 126, 34, 0.4);
+        }
+
+        /* Секції */
+        .page-section {
+            display: none;
+            padding: 20px 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        /* Hero блок */
         .hero {
+            background-color: var(--primary-color);
+            color: var(--white);
             padding: 40px 20px;
-            background: linear-gradient(rgba(27, 77, 62, 0.9), rgba(27, 77, 62, 0.95));
-            color: white;
+            text-align: center;
+            border-radius: var(--border-radius);
+            margin-bottom: 30px;
         }
+
+        .hero h1 {
+            font-size: 26px;
+            margin-bottom: 12px;
+        }
+
+        .hero p {
+            font-size: 15px;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
         .btn {
             display: inline-block;
-            background-color: #e67e22;
-            color: white;
-            padding: 12px 24px;
-            margin: 10px;
-            border-radius: 8px;
+            background-color: var(--accent-color);
+            color: var(--white);
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
             text-decoration: none;
             font-weight: bold;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
         }
-        .container {
-            max-width: 600px;
-            margin: 20px auto;
+
+        .btn-secondary {
+            background-color: var(--white);
+            color: var(--primary-color);
+            margin-left: 10px;
+        }
+
+        /* Категорії */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .category-card {
+            background: var(--white);
             padding: 20px;
-            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .category-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--primary-color);
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .category-list {
+            list-style: none;
+            padding-left: 5px;
+        }
+
+        .category-list li {
+            font-size: 14px;
+            padding: 4px 0;
+            color: var(--text-dark);
+        }
+
+        /* Пошук та картки замовлень */
+        .search-box {
+            background: var(--white);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .input-control {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #cbd5e0;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 14px;
+        }
+
+        .job-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--primary-color);
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .job-price {
+            color: var(--accent-color);
+            white-space: nowrap;
+        }
+
+        .job-meta {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        /* Карта */
+        .map-mock {
+            height: 300px;
+            background-color: #cbd5e0;
+            border-radius: var(--border-radius);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #4a5568;
+            overflow: hidden;
+        }
+
+        .map-pin {
+            position: absolute;
+            color: var(--accent-color);
+            font-size: 24px;
+            top: 40%;
+            left: 50%;
+        }
+
+        /* Форми */
+        .form-container {
+            background: var(--white);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+        }
+
+        .form-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .desktop-nav { display: none; }
+            .mobile-nav { display: flex; }
+            .btn-secondary { margin-left: 0; margin-top: 10px; width: 100%; }
+            .btn { width: 100%; text-align: center; }
         }
     </style>
 </head>
 <body>
 
-    <header>🇺🇦 Робота поруч</header>
-    
-    <div class="hero">
-        <h1>Знайди роботу або замов послугу у своєму районі</h1>
-        <p>Корисна робота поруч із тобою. Знаходь замовлення, пропонуй свої послуги та допомагай людям.</p>
-        <a href="#" class="btn" onclick="alert('Форма пошуку відкриється після оновлення!')">Знайти роботу</a>
-        <a href="#" class="btn" style="background-color: #2c6b56;" onclick="alert('Форма замовлення відкриється після оновлення!')">Замовити послугу</a>
-    </div>
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo" onclick="switchPage('home')">
+                <i class="fa-solid fa-location-dot"></i> Робота поруч
+            </a>
+            <div class="desktop-nav">
+                <a href="#" id="d-home" class="active" onclick="switchPage('home')">Головна</a>
+                <a href="#" id="d-find" onclick="switchPage('find')">Знайти роботу</a>
+                <a href="#" id="d-create" onclick="switchPage('create')">Замовити послугу</a>
+                <a href="#" id="d-map" onclick="switchPage('map')">Карта</a>
+            </div>
+        </div>
+    </header>
 
-    <div class="container">
-        <h3>Тестовий запуск сайту успішний!</h3>
-        <p>Якщо ви бачите цей текст, отже ваш хостинг на GitHub Pages працює ідеально.</p>
-    </div>
+    <!-- Мобільна панель навігації -->
+    <nav class="mobile-nav">
+        <button class="mobile-nav-item active" id="m-home" onclick="switchPage('home')">
+            <i class="fa-solid fa-house"></i>Головна
+        </button>
+        <button class="mobile-nav-item" id="m-find" onclick="switchPage('find')">
+            <i class="fa-solid fa-briefcase"></i>Робота
+        </button>
+        <button class="mobile-nav-item center-btn" onclick="switchPage('create')">
+            <i class="fa-solid fa-plus"></i>
+        </button>
+        <button class="mobile-nav-item" id="m-map" onclick="switchPage('map')">
+            <i class="fa-solid fa-map-location-dot"></i>Карта
+        </button>
+        <button class="mobile-nav-item" id="m-profile" onclick="switchPage('profile')">
+            <i class="fa-solid fa-user"></i>Профіль
+        </button>
+    </nav>
 
-</body>
-</html>
+    <!-- ГОЛОВНА СТОРІНКА -->
+    <section id="page-home" class="page-section active">
+        <div class="hero">
+            <h1>Робота поруч. Допомога поруч. Люди поруч.</h1>
+            <p>Знаходь роботу, замовляй послуги та знаходь виконавців у своєму районі.</p>
+            <button class="btn" onclick="switchPage('find')">Знайти роботу</button>
