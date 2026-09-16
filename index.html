@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Робота поруч — Знайди роботу або замов послугу у своєму районі</title>
-    <!-- Додано іконки FontAwesome для відображення значків у меню -->
-    <link href="https://cloudflare.com" rel="stylesheet">
     <style>
         :root {
             --primary-color: #1b4d3e;
@@ -31,7 +29,7 @@
             background-color: var(--bg-light);
             color: var(--text-dark);
             line-height: 1.5;
-            padding-bottom: 80px;
+            padding-bottom: 90px; /* Збільшено відступ, щоб меню не перекривало контент */
         }
 
         header {
@@ -82,26 +80,28 @@
             background-color: #edf2f7;
         }
 
-        /* Мобільне меню */
+        /* Мобільне меню — ВИПРАВЛЕНО ТА СТАБІЛІЗОВАНО */
         .mobile-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             background-color: var(--white);
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-            display: none;
+            box-shadow: 0 -2px 15px rgba(0,0,0,0.15);
+            display: none; /* Увімкнеться на мобільних через медіа-запит */
             justify-content: space-around;
             align-items: center;
-            height: 65px;
-            z-index: 1000;
+            height: 70px; /* Фіксована висота */
+            z-index: 9999;
+            padding: 0 10px;
         }
 
         .mobile-nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            font-size: 11px;
+            justify-content: center;
+            font-size: 12px;
             color: var(--text-muted);
             text-decoration: none;
             font-weight: 500;
@@ -110,32 +110,48 @@
             cursor: pointer;
             flex: 1;
             height: 100%;
-            justify-content: center;
         }
 
-        .mobile-nav-item i {
-            font-size: 20px;
+        .mobile-nav-item svg {
+            width: 24px;
+            height: 24px;
             margin-bottom: 4px;
+            fill: var(--text-muted);
+            transition: var(--transition);
         }
 
         .mobile-nav-item.active {
             color: var(--primary-color);
         }
 
-        .mobile-nav-item.center-btn {
-            background-color: var(--accent-color);
-            color: var(--white);
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            justify-content: center;
-            position: relative;
-            top: -15px;
-            box-shadow: 0 4px 10px rgba(230, 126, 34, 0.4);
-            flex: none;
+        .mobile-nav-item.active svg {
+            fill: var(--primary-color);
         }
 
-        /* Секції */
+        /* Помаранчева кнопка по центру */
+        .mobile-nav-item.center-btn {
+            background-color: var(--accent-color);
+            width: 56px;
+            height: 56px;
+            max-width: 56px;
+            border-radius: 50%;
+            position: relative;
+            top: -15px;
+            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.4);
+            flex: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-nav-item.center-btn svg {
+            width: 26px;
+            height: 26px;
+            fill: var(--white);
+            margin-bottom: 0;
+        }
+
+        /* Секції сторінок */
         .page-section {
             display: none;
             padding: 20px 15px;
@@ -179,11 +195,7 @@
             border: none;
             cursor: pointer;
             font-size: 15px;
-            transition: var(--transition);
-        }
-
-        .btn:hover {
-            opacity: 0.9;
+            width: auto;
         }
 
         /* Категорії */
@@ -273,22 +285,11 @@
             height: 400px;
             background-color: #cbd5e0;
             border-radius: var(--border-radius);
-            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             color: #4a5568;
-            overflow: hidden;
-        }
-
-        .map-pin {
-            position: absolute;
-            color: var(--accent-color);
-            font-size: 32px;
-            top: 45%;
-            left: 50%;
-            transform: translate(-50%, -50%);
         }
 
         /* Форми */
@@ -306,11 +307,13 @@
             font-size: 14px;
         }
 
+        /* Адаптивність */
         @media (max-width: 768px) {
             .desktop-nav { display: none; }
-            .mobile-nav { display: flex; }
+            .mobile-nav { display: flex; } /* Меню точно увімкнеться */
             .hero h1 { font-size: 22px; }
             .hero p { font-size: 14px; }
+            .btn { width: 100%; text-align: center; }
         }
     </style>
 </head>
@@ -319,9 +322,7 @@
     <!-- Шапка для ПК -->
     <header>
         <div class="header-container">
-            <a href="#" class="logo" onclick="switchPage('home')">
-                <i class="fa-solid fa-location-dot"></i> Робота поруч
-            </a>
+            <a href="#" class="logo" onclick="switchPage('home')">Робота поруч</a>
             <nav>
                 <ul class="desktop-nav">
                     <li><a class="nav-link active" onclick="switchPage('home')">Головна</a></li>
@@ -344,12 +345,10 @@
         <h2 style="margin-bottom: 15px; color: var(--primary-color);">Популярні категорії</h2>
         <div class="categories-grid">
             <div class="category-card">
-                <div class="category-title"><i class="fa-solid fa-hammer"></i> Ремонт та будівництво</div>
+                <div class="category-title">Ремонт та будівництво</div>
                 <ul class="category-list">
                     <li>• Сантехнічні послуги</li>
                     <li>• Електрик терміново</li>
                     <li>• Складання меблів</li>
                 </ul>
             </div>
-            <div class="category-card">
-                <div class="category-title"><i class="fa-solid fa-broom"></i> Прибирання та побут</div>
